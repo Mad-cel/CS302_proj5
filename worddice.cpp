@@ -10,8 +10,8 @@ typedef enum {SOURCE, SINK, DICE, WORD} Node_Type;
 
 class Edge {
   public:
-	  Edge(class Node *, class Node *, int, int, int);
-      int index;                      // The edge's index (to store in the edge map).
+	  Edge(class Node *, class Node *, int, int);
+      //int index;                      // The edge's index (to store in the edge map).
       class Node *from;               // The "from" node
       class Node *to;                 // The "to" node
       Edge *reverse;                  // The reverse edge, for processing the residual graph
@@ -64,13 +64,13 @@ void Graph::print_node()
 	}
 }
 
-Edge::Edge(class Node * f, class Node *t, int o, int r, int i)
+Edge::Edge(class Node * f, class Node *t, int o, int r)
 {
 	from = f;
 	to = t;
 	original = o;
 	residual = r;
-	index = i;
+	//index = i;
 }
 
 Node::Node(int a)
@@ -177,8 +177,8 @@ int main(int argc, char* argv[])
 		}
 
 		//to source connect from dice to source, from source connect from source to dice
-		Edge * to_source = new Edge(dice_node, source_node, 0, 1, 0);
-		Edge * from_source = new Edge(source_node, dice_node, 1, 0, source_index);
+		Edge * to_source = new Edge(dice_node, source_node, 0, 1);
+		Edge * from_source = new Edge(source_node, dice_node, 1, 0);
 		//cout << to_source->original;
 		source_index++;
 
@@ -218,9 +218,9 @@ int main(int argc, char* argv[])
 				if (g->nodes[i]->letters[letter - 65] == 1 && g->nodes[i]->type == DICE)
 				{
 					//create connection similiar to connection to source
-					Edge * to_word = new Edge(g->nodes[i], word_node, 1, 0, word_node_index);
+					Edge * to_word = new Edge(g->nodes[i], word_node, 1, 0);
 					word_node_index++;
-					Edge * from_word = new Edge(word_node, g->nodes[i], 0, 1, dice_node_index);
+					Edge * from_word = new Edge(word_node, g->nodes[i], 0, 1);
 					dice_node_index++;
 
 					to_word->reverse = from_word;
@@ -245,13 +245,16 @@ int main(int argc, char* argv[])
 		for (int i = num_dice + 1; i <= g->min_nodes; i++)
 		{
 			//default case where the edges to sink index = 0
-			Edge * to_sink = new Edge(g->nodes[i], sink, 1, 0, 0);
+			Edge * to_sink = new Edge(g->nodes[i], sink, 1, 0);
+
+			/*
 			if (g->nodes[i]->adj.size() != 0)
 			{
 				to_sink->index = g->nodes[i]->adj[g->nodes[i]->adj.size() - 1]->index + 1;
 			}
+			*/
 
-			Edge * from_sink = new Edge(sink, g->nodes[i], 0, 1, sink_index);
+			Edge * from_sink = new Edge(sink, g->nodes[i], 0, 1);
 			sink_index++;
 			from_sink->reverse = to_sink;
 			to_sink->reverse = from_sink;
