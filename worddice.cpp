@@ -40,7 +40,6 @@ class Graph
 		int canIspell();		//call BFS()
 		void delete_halfgraph();//delete graph, erase edge between Word and dice, word and sink, delete word && sink
 								//resize nodes to min_nodes 
-		
 };
 
 Edge::Edge(class Node * f, class Node *t, int o, int r, int i)
@@ -63,6 +62,8 @@ Node::Node(int a)
 int Graph::BFS(){}
 
 int Graph::canIspell(){}
+
+void Graph::delete_halfgraph(){}
 
 int main(int argc, char* argv[])
 {
@@ -111,6 +112,7 @@ int main(int argc, char* argv[])
 			//cout << letter;
 		}
 
+		//to source connect from dice to source, from source connect from source to dice
 		Edge * to_source = new Edge(dice_node, source_node, 0, 1, 0);
 		Edge * from_source = new Edge(source_node, dice_node, 1, 0, source_index);
 		//cout << to_source->original;
