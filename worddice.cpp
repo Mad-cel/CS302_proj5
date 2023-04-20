@@ -11,7 +11,7 @@ typedef enum {SOURCE, SINK, DICE, WORD} Node_Type;
 class Edge {
   public:
 	  Edge(class Node *, class Node *, int, int);
-      //int index;                      // The edge's index (to store in the edge map).
+      //int index;                    // The edge's index (to store in the edge map).
       class Node *from;               // The "from" node
       class Node *to;                 // The "to" node
       Edge *reverse;                  // The reverse edge, for processing the residual graph
