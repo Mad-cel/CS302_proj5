@@ -3,6 +3,7 @@
 #include <vector>
 #include <fstream>
 #include <string>
+#include <queue>
 #include <sstream>
 using namespace std;
 
@@ -83,10 +84,37 @@ Node::Node(int a)
 
 int Graph::BFS(){
 	//BFS 
+	//clear all backedge 
+	for (int i = 0; i < (int)nodes.size(); i++)
+		nodes[i]->backedge = NULL;
+	
+	queue <Node *> q;
+	q.push(nodes[0]);
+
+	while (!q.empty())
+	{
+		Node *curr_node = q.front();
+		q.pop();
+
+		if (curr_node->type = SINK)
+			return 1; //There is a pth from source to dice to word, the letter required for words exists. (There is a way)
+		
+		//loop through adj list
+			//if original == 1 && not visited 
+				//push_back to visiit
+				//set backedge
+				//set as visited 
+	}
+
+	return 0;
 }
 
 int Graph::canIspell(){
 	//call BFS
+	while (BFS())
+	{
+	}
+	
 }
 
 void Graph::delete_halfgraph()
@@ -227,7 +255,7 @@ int main(int argc, char* argv[])
 					from_word->reverse = to_word;
 
 					g->nodes[i]->adj.push_back(to_word);
-					word_node->adj.push_back(from_word);
+					//word_node->adj.push_back(from_word);
 				}
 			}
 
