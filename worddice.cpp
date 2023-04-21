@@ -97,18 +97,17 @@ int Graph::BFS(){
 		q.pop();
 
 		if (curr_node->type == SINK)
-			return 1; //There is a pth from source to dice to word, the letter required for words exists. (There is a way)
+			return 1; //There is a path from source to dice to word, the letter required for words exists. (There is a way)
 		
 		for(int i = 0; i < (int)curr_node->adj.size(); i++){
 			Edge *curr_edge = curr_node->adj[i];
-			curr_node = curr_edge->to; //subject to change
+			Node * curr_node2 = curr_edge->to; //subject to change
 
-			if(curr_edge->original == 1 && curr_node->visited == 0){
-				curr_node->visited = 1;
-				curr_node->backedge = curr_edge->reverse;
-				q.push(curr_node);
+			if(curr_edge->original == 1 && curr_node2->visited == 0){
+				curr_node2->visited = 1;
+				curr_node2->backedge = curr_edge->reverse;
+				q.push(curr_node2);
 			}
-
 
 		}
 		//loop through adj list
@@ -134,6 +133,8 @@ int Graph::canIspell(){
 
 			curr_edge->reverse->original = 1;
 			curr_edge->reverse->residual = 0;
+
+			curr_edge = curr_edge->to->backedge;
 		}
 
 		//change source to idce edge so it can be used again
@@ -298,7 +299,7 @@ int main(int argc, char* argv[])
 					from_word->reverse = to_word;
 
 					g->nodes[i]->adj.push_back(to_word);
-					//word_node->adj.push_back(from_word);
+					word_node->adj.push_back(from_word);
 				}
 			}
 
@@ -335,7 +336,7 @@ int main(int argc, char* argv[])
 		g->nodes.push_back(sink);
 		g->min_nodes++;
 			
-		g->print_node();
+		//g->print_node();
 
 		
 		if (g->canIspell())
