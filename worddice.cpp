@@ -96,9 +96,21 @@ int Graph::BFS(){
 		Node *curr_node = q.front();
 		q.pop();
 
-		if (curr_node->type = SINK)
+		if (curr_node->type == SINK)
 			return 1; //There is a pth from source to dice to word, the letter required for words exists. (There is a way)
 		
+		for(int i = 0; i < (int)curr_node->adj.size(); i++){
+			Edge *curr_edge = curr_node->adj[i];
+			curr_node = curr_edge->to; //subject to change
+
+			if(curr_edge->original == 1 && curr_node->visited == 0){
+				curr_node->visited = 1;
+				curr_node->backedge = curr_edge->reverse;
+				q.push(curr_node);
+			}
+
+
+		}
 		//loop through adj list
 			//if original == 1 && not visited 
 				//push_back to visiit
@@ -113,7 +125,38 @@ int Graph::canIspell(){
 	//call BFS
 	while (BFS())
 	{
+		Node *sink_node = nodes[nodes.size()-1];
+		Edge *curr_edge = sink_node->backedge;
+
+		while(curr_edge->to->type != SOURCE){
+			curr_edge->original = 0;
+			curr_edge->residual = 1;
+
+			curr_edge->reverse->original = 1;
+			curr_edge->reverse->residual = 0;
+		}
+
+		//change source to idce edge so it can be used again
+		
+		for(int i = 0; i<(int)nodes.size(); i++){
+			Node *curr_node = nodes[i];
+
+			if(nodes[i]->type == WORD){
+				for(int j = 0; j < (int)curr_node->adj.size(); j++){
+					if(curr_node->adj[j]->to == sink_node){
+						if (curr_node->adj[j]->residual != 1){
+							return 0;
+						}
+
+					}
+				}
+			}
+		}
 	}
+
+	//while()
+
+	return 1;
 	
 }
 
@@ -294,14 +337,14 @@ int main(int argc, char* argv[])
 			
 		g->print_node();
 
-		/*
+		
 		if (g->canIspell())
 		{
-			//print output 
+			cout << "YOP";
 		}
 		else
 			cout << "Cannot spell " << input << endl;
-		*/
+		
 		g->delete_halfgraph();
 
 		id = num_dice + 1;	
