@@ -83,59 +83,75 @@ Node::Node(int a)
 }
 
 int Graph::BFS(){
-	//BFS 
-	//clear all backedge 
-	for (int i = 0; i < (int)nodes.size(); i++)
-		nodes[i]->backedge = NULL;
 	
-	queue <Node *> q;
-	q.push(nodes[0]);
-
-	while (!q.empty())
-	{
-		Node *curr_node = q.front();
-		q.pop();
-
-		if (curr_node->type == SINK)
-			return 1; //There is a path from source to dice to word, the letter required for words exists. (There is a way)
-		
-		for(int i = 0; i < (int)curr_node->adj.size(); i++){
-			Edge *curr_edge = curr_node->adj[i];
-			Node * curr_node2 = curr_edge->to; //subject to change
-
-			if(curr_edge->original == 1 && curr_node2->visited == 0){
-				curr_node2->visited = 1;
-				curr_node2->backedge = curr_edge->reverse;
-				q.push(curr_node2);
-			}
-
-		}
-		//loop through adj list
-			//if original == 1 && not visited 
-				//push_back to visiit
-				//set backedge
-				//set as visited 
+	//Clear all backedges that might have be set from prev bfs search
+	for(int i = 0; i < int(nodes.size()); i++){
+		nodes[i]->backedge = NULL;
 	}
 
+	queue <Node *> q;		//hold queue of nodes to check
+	vector <int> visited;		//hold queue of visited node ids
+	q.push(nodes[0]);	//start with beginning node
+	
+	//run while there is something in queue
+	while(!q.empty()){
+		Node* curr_node = q.front();		//get first element of queue
+		q.pop();	//remove first element from queue
+		
+		
+		if(curr_node->type == SINK){		//return if this is target
+			return 1;
+			
+		}
+			
+		//run through adj list
+		for(int i = 0; i < int(curr_node->adj.size()); i++){
+			Edge *thisEdge = curr_node->adj[i];		//edge we are looking at
+			Node *thisNode = thisEdge->to;		//to node we are looking at
+			int thisId = thisNode->id;			//nodes id
+			
+			//make sure original is 1 and we have not visited this node
+			if(thisEdge->original == 1 && !count(visited.begin(), visited.end(), thisId)){
+
+				visited.push_back(thisId);					//record node as visited
+				//thisNode->visited = 1;
+				thisNode->backedge = thisEdge->reverse;		//set nodes backedge
+				q.push(thisNode);					//add node to queue
+			}
+		}
+	}
+
+	//if here, no path found
 	return 0;
+	
 }
 
 int Graph::canIspell(){
 	//call BFS
+	
+	Node *sink_node = nodes[nodes.size() - 1];
+
 	while (BFS())
 	{
-		Node *sink_node = nodes[nodes.size()-1];
+		//Node *sink_node = nodes[nodes.size()-1];
 		Edge *curr_edge = sink_node->backedge;
 
 		while(curr_edge->to->type != SOURCE){
-			curr_edge->original = 0;
-			curr_edge->residual = 1;
+			curr_edge->original = 1;
+			curr_edge->residual = 0;
 
-			curr_edge->reverse->original = 1;
-			curr_edge->reverse->residual = 0;
+			curr_edge->reverse->original = 0;
+			curr_edge->reverse->residual = 1;
 
 			curr_edge = curr_edge->to->backedge;
 		}
+
+		curr_edge->original = 1;
+		curr_edge->residual = 0;
+
+		curr_edge->reverse->original = 0;
+		curr_edge->reverse->residual = 1;	
+	}
 
 		//change source to idce edge so it can be used again
 		
@@ -143,8 +159,10 @@ int Graph::canIspell(){
 			Node *curr_node = nodes[i];
 
 			if(nodes[i]->type == WORD){
+
 				for(int j = 0; j < (int)curr_node->adj.size(); j++){
-					if(curr_node->adj[j]->to == sink_node){
+
+					if(curr_node->adj[j]->to->type == SINK){
 						if (curr_node->adj[j]->residual != 1){
 							return 0;
 						}
@@ -153,12 +171,11 @@ int Graph::canIspell(){
 				}
 			}
 		}
-	}
 
-	//while()
 
 	return 1;
 	
+
 }
 
 void Graph::delete_halfgraph()
@@ -191,7 +208,7 @@ void Graph::delete_halfgraph()
 				(*edge_it)->original = 1;
 				(*edge_it)->residual = 0;
 				(*edge_it)->reverse->original = 0;
-				(*edge_it)->reverse->residual = 0;
+				(*edge_it)->reverse->residual = 1;
 				edge_it++;
 			}
 			i++;
