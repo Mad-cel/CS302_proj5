@@ -1,0 +1,3 @@
+Shawn-Patrick Barhorst Haoran Chen (me) are in the same group for this project. 
+I work on the main function which create connection, Nodes and Edges. I also worked on delete half graph function as well. Both of us work on the BFS and CanIspell function. Shawn worked on the printspelling function.
+The program uses the Edmond-Karp algorithm. The run time for this program should be O(V E^2). We implement a BFS algorithm to iterate through the nodes vector. We use a queue as frontier and a vector of int to store if a node is visited or not. I use vector in main function to store nodes, and a vector as well to store adjacent edges.
