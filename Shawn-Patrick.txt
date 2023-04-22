@@ -1,0 +1,14 @@
+Shawn-Patrick Barhorst
+Haoren Chen
+
+Contributions:
+	I wrote the BFS(), Output(), and canIspell(), functions whereas Haoren handled the graph class structure. Haoren also helped debug the canIspell function when it wasn't working.
+		
+Answers:
+	The program uses the Edmond-Karp algorithm meaning that the program should be O(E^2),
+	where E is the number of edges in the graph. One notable difference from previous 		
+	projects is that this algorithm uses BFS(). Where as in the past I have use DFS() which
+	would then mean we are using the Ford_fulkerson algorithm which has similar time complexity.
+	The only data structures used in the graph structure is the vectors to store edges and nodes
+	and the queue we use in the BFS function. 
+	
