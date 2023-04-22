@@ -5,6 +5,7 @@
 #include <string>
 #include <queue>
 #include <sstream>
+#include <algorithm>
 using namespace std;
 
 typedef enum {SOURCE, SINK, DICE, WORD} Node_Type;
@@ -42,6 +43,7 @@ class Graph
 		int canIspell();		//call BFS()
 		void delete_halfgraph();//delete graph, erase edge between Word and dice, word and sink, delete word && sink
 								//resize nodes to min_nodes 
+		queue<int> output();
 };
 
 void Graph::print_node()
@@ -153,8 +155,6 @@ int Graph::canIspell(){
 		curr_edge->reverse->residual = 1;	
 	}
 
-		//change source to idce edge so it can be used again
-		
 		for(int i = 0; i<(int)nodes.size(); i++){
 			Node *curr_node = nodes[i];
 
@@ -217,6 +217,36 @@ void Graph::delete_halfgraph()
 	}
 	min_nodes = nodes.size() - 1;
 }
+
+queue<int> Graph::output(){
+	vector<int> visited;
+	Node *current_node;
+	Edge *current_edge;
+	int current_id;
+	//int count;
+	queue<int> q;
+
+	for(int i = 0; i<(int)nodes.size(); i++){
+		current_node = nodes[i];
+		if(current_node->type == WORD){
+			for(int j = 0; j < (int)current_node->adj.size(); j++){
+				current_edge = current_node->adj[j];
+				if(current_edge->to->type == DICE && current_edge->original){
+					current_id = current_edge->to->id;
+
+					if(find(visited.begin(), visited.end(), current_id) == visited.end()){
+						visited.push_back(current_id);
+						q.push(current_id-1);
+						break;
+					}
+				}
+			}
+		}
+	}
+	visited.clear();
+	return q;
+}
+
 
 int main(int argc, char* argv[])
 {
@@ -354,11 +384,22 @@ int main(int argc, char* argv[])
 		g->min_nodes++;
 			
 		//g->print_node();
-
-		
+	
+		queue<int> output_q;	
 		if (g->canIspell())
 		{
-			cout << "YOP";
+			output_q = g->output();
+			while(true){
+				cout << output_q.front();
+				output_q.pop();
+				if(output_q.empty()){
+					cout << ": " << input;
+					cout << endl;
+					break;
+				}else{
+					cout << ',';
+				}
+			}
 		}
 		else
 			cout << "Cannot spell " << input << endl;
