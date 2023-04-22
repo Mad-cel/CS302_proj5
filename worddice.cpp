@@ -1,3 +1,9 @@
+//Proj-5 WordDice
+//Haoren Chen, Shawn-Patrick Barhorst
+//A program that uses network flow to state whether certain word dice, can spell words from a list
+//04-21-23
+
+
 #include <cstdio>
 #include <iostream>
 #include <vector>
@@ -13,7 +19,6 @@ typedef enum {SOURCE, SINK, DICE, WORD} Node_Type;
 class Edge {
   public:
 	  Edge(class Node *, class Node *, int, int);
-      //int index;                    // The edge's index (to store in the edge map).
       class Node *from;               // The "from" node
       class Node *to;                 // The "to" node
       Edge *reverse;                  // The reverse edge, for processing the residual graph
@@ -73,7 +78,6 @@ Edge::Edge(class Node * f, class Node *t, int o, int r)
 	to = t;
 	original = o;
 	residual = r;
-	//index = i;
 }
 
 Node::Node(int a)
@@ -116,7 +120,6 @@ int Graph::BFS(){
 			if(thisEdge->original == 1 && !count(visited.begin(), visited.end(), thisId)){
 
 				visited.push_back(thisId);					//record node as visited
-				//thisNode->visited = 1;
 				thisNode->backedge = thisEdge->reverse;		//set nodes backedge
 				q.push(thisNode);					//add node to queue
 			}
@@ -135,7 +138,6 @@ int Graph::canIspell(){
 
 	while (BFS())
 	{
-		//Node *sink_node = nodes[nodes.size()-1];
 		Edge *curr_edge = sink_node->backedge;
 
 		while(curr_edge->to->type != SOURCE){
@@ -226,8 +228,11 @@ queue<int> Graph::output(){
 	//int count;
 	queue<int> q;
 
+	//loop through all nodes an find WORD nodes
 	for(int i = 0; i<(int)nodes.size(); i++){
 		current_node = nodes[i];
+		//loop through all the edges of the word nodes and find the wdges connecting to DICE nodes
+		//check if it is orignal or if it has been visited already, and push the output into a queue for printing later
 		if(current_node->type == WORD){
 			for(int j = 0; j < (int)current_node->adj.size(); j++){
 				current_edge = current_node->adj[j];
@@ -298,7 +303,6 @@ int main(int argc, char* argv[])
 		//to source connect from dice to source, from source connect from source to dice
 		Edge * to_source = new Edge(dice_node, source_node, 0, 1);
 		Edge * from_source = new Edge(source_node, dice_node, 1, 0);
-		//cout << to_source->original;
 		source_index++;
 
 		to_source->reverse = from_source;
@@ -365,14 +369,6 @@ int main(int argc, char* argv[])
 		{
 			//default case where the edges to sink index = 0
 			Edge * to_sink = new Edge(g->nodes[i], sink, 1, 0);
-
-			/*
-			if (g->nodes[i]->adj.size() != 0)
-			{
-				to_sink->index = g->nodes[i]->adj[g->nodes[i]->adj.size() - 1]->index + 1;
-			}
-			*/
-
 			Edge * from_sink = new Edge(sink, g->nodes[i], 0, 1);
 			sink_index++;
 			from_sink->reverse = to_sink;
@@ -382,9 +378,8 @@ int main(int argc, char* argv[])
 		}
 		g->nodes.push_back(sink);
 		g->min_nodes++;
-			
-		//g->print_node();
-	
+
+		//if we can spell, take the output from the queue and format and print it
 		queue<int> output_q;	
 		if (g->canIspell())
 		{
